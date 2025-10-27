@@ -31,4 +31,16 @@ jobs:
           COMMITLOG=$(git log -1 --pretty=%B)
           echo "commitlog=$COMMITLOG" >> $GITHUB_OUTPUT
           
-
+  build:
+    needs: info
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Print message
+        run: |
+          echo "Commit SHA: ${{ needs.info.outputs.commit-sha }}"
+          echo "Branch: ${{ needs.info.outputs.branch }}"
+          echo "Commit Log: ${{ needs.info.outputs.log-message }}"
