@@ -1,0 +1,26 @@
+name: PR Workflow 🌏
+
+on:
+  - pull_request
+
+jobs:
+  say-hello:
+    name: Say Hello
+
+    # Which type of machine to run the job on (other options include `windows-latest` and `macos-latest`)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Hello pull-request!!
+        run: echo "Hello pull-request!!"
+
+      - name: Print greeting
+        run: echo "Hello, GitHub Actions! Welcome to the workshop!"
+
+      - name: Print date and time
+        run: date
+
+      - name: Print system information
+        run: |
+          echo "Running on:"
+          uname -a
