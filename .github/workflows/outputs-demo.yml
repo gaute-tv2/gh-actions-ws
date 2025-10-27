@@ -1,0 +1,47 @@
+name: outputs-demo
+on:
+  push
+
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    outputs:
+      commit-sha: ${{ steps.commit.outputs.sha }}
+      branch: ${{ steps.branch.outputs.branch }}
+      log-message: ${{ steps.log.outputs.commitlog }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Calculate sha
+        id: commit
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+
+      - name: Get branchname
+        id: branch
+        run: |
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Get commitlog message
+        id: log
+        run: |
+          COMMITLOG=$(git log -1 --pretty=%B)
+          echo "commitlog=$COMMITLOG" >> $GITHUB_OUTPUT
+          
+  build:
+    needs: info
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Print message
+        run: |
+          echo "Commit SHA: ${{ needs.info.outputs.commit-sha }}"
+          echo "Branch: ${{ needs.info.outputs.branch }}"
+          echo "Commit Log: ${{ needs.info.outputs.log-message }}"
